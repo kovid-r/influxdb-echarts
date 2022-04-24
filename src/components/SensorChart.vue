@@ -4,6 +4,7 @@
       <chart :options="chartOptionsLine">
       </chart>
     </div>
+    {{fluxData}}
   </div>
 </template>
 
@@ -11,7 +12,7 @@
 
 export default {
   name: "SensorChart",
-  props: ["sampleData","sampleLabels"],
+  props: ["sampleData","sampleLabels","fluxData"],
 
   data: function() { 
     return {
@@ -30,7 +31,7 @@ export default {
           }
         ],
         title: {
-          text: "Sensor Data",
+          text: this.fluxData,
           x: "center",
           textStyle: {
             fontSize: 24
