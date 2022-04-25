@@ -1,34 +1,55 @@
 <template>
   <div id="app">
     <h1>InfluxDB + Apache Echarts</h1>
-    <SensorChart :sampleData="sampleDataForChart" :sampleLabels="sampleLabelsForChart" :fluxData="fluxDataForChart">
+    <SensorChart :mainData="mainData" :isCompleted="isCompleted" o>
     </SensorChart>
   </div>
 </template>
 
 <script>
-import SensorChart from './components/SensorChart.vue';
-import {fluxData} from './main.js';
+import SensorChart from "./components/SensorChart.vue";
+import { queryApi, fluxQuery } from "./main.js";
 
 export default {
-  name: 'app',
-  props: ["fluxData"],
+  name: "app",
+  props: [],
   data() {
     return {
-      sampleLabelsForChart: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-      sampleDataForChart: [820, 932, 901, 934, 1290, 1330, 1320],
-      fluxDataForChart: fluxData
+      mainData: [],
+      isCompleted: false
+    };
+  },
+  methods: {
+     async fetchData() {
+       await queryApi.queryRows(fluxQuery, {
+        next: (row, tableMeta) => {
+          const o = tableMeta.toObject(row);
+          window.console.log(o);
+          this.mainData.push(o);
+        },
+        error: error => {
+          window.console.error(error);
+          window.console.log("\nFinished ERROR");
+        },
+        complete: () => {
+          this.isCompleted = true;
+          window.console.log("\nFinished SUCCESS");
+        }
+      });
     }
+  },
+  async mounted() {
+    await this.fetchData();
   },
   components: {
     SensorChart
   }
-}
+};
 </script>
 
 <style>
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;

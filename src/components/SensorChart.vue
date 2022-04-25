@@ -1,24 +1,33 @@
 <template>
   <div>
-    <div class="chart-wrapper">
-      <chart :options="chartOptionsLine">
-      </chart>
+    <div v-if="mainData.length" class="chart-wrapper">
+      <chart :options="chartOptionsLine"> </chart>
     </div>
-    {{fluxData}}
+    <div v-else>Loading...</div>
   </div>
 </template>
-
 <script>
-
+  
 export default {
   name: "SensorChart",
-  props: ["sampleData","sampleLabels","fluxData"],
+  props: ["mainData", "isCompleted"],
 
-  data: function() { 
+  data: function() {
+    let labels = [];
+    let values = [];
+    window.console.log(this.mainData, "Kovid");
+    this.mainData.map(val => {
+      if (val._value) {
+        values.push(val._value);
+      } else if (val._time) {
+        labels.push(val._time);
+      }
+    });
+
     return {
-      chartOptionsLine: { 
+      chartOptionsLine: {
         xAxis: {
-          data: this.sampleLabels
+          data: labels
         },
         yAxis: {
           type: "value"
@@ -27,22 +36,13 @@ export default {
         series: [
           {
             type: "line",
-            data: this.sampleData
+            data: values
           }
-        ],
-        title: {
-          text: this.fluxData,
-          x: "center",
-          textStyle: {
-            fontSize: 24
-          }
-        },
-        color: ["#127ac2"]
+        ]
       }
-    }
+    };
   }
 };
-
 </script>
 
 <style scoped>
