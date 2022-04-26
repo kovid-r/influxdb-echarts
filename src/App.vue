@@ -1,12 +1,13 @@
 <template>
   <div id="app">
     <h1>InfluxDB + Apache Echarts</h1>
-    <SensorChart :mainData="mainData" :isCompleted="isCompleted" o>
+    <SensorChart :mainData="mainData" :isCompleted="isCompleted">
     </SensorChart>
   </div>
 </template>
 
 <script>
+
 import SensorChart from "./components/SensorChart.vue";
 import { queryApi, fluxQuery } from "./main.js";
 
@@ -24,7 +25,6 @@ export default {
        await queryApi.queryRows(fluxQuery, {
         next: (row, tableMeta) => {
           const o = tableMeta.toObject(row);
-          window.console.log(o);
           this.mainData.push(o);
         },
         error: error => {
@@ -38,8 +38,8 @@ export default {
       });
     }
   },
-  async mounted() {
-    await this.fetchData();
+  mounted() {
+   return this.fetchData();
   },
   components: {
     SensorChart
@@ -53,7 +53,8 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
+  color: #0d263e;
   margin-top: 60px;
 }
+
 </style>
